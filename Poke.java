@@ -145,7 +145,7 @@ public class Poke
 	public static String compareOnePair(String[] blacks,String[] whites)
 	{
 		String str = "tie(平局)";
-		//判断对子的大小：
+		//判断对子的大小
 		str = comparePairs(blacks,whites,4,0);
 		//若相等，比较散牌的大小
 		if (str == "tie(平局)")
@@ -172,7 +172,6 @@ public class Poke
 	public static String compareThreeOrFourOfAKindAndFullHouse(String[] blacks,String[] whites)
 	{
 		String str = "White wins";
-		//判断三条、铁支、葫芦的大小：共通点，都有三条
 		char blackPair = 'a';
 		char whitePair = 'a';
 		for(int i=4;i>1;i--)
@@ -196,7 +195,6 @@ public class Poke
 			{put('2','a');put('3','b');;put('4','c');put('5','d');put('6','e');put('7','f');
 			put('8','g');put('9','h');put('T','i');put('J','j');put('Q','k');put('K','l');put('A','m');}
 			};
-//		输入: Black: 2H 3D 5S 9C KD White: 2C 3H 4S 8C AH 输出: White wins
 		for (int i=7;i<21;i=i+3)
 		{
 			black.setCharAt(i, numberMap.get(black.charAt(i)));
@@ -208,24 +206,19 @@ public class Poke
 		Arrays.sort(whites);
 		int typeOfBlack = helper(blacks);
 		int typeOfWhite = helper(whites);
-		
 		if (typeOfBlack > typeOfWhite)
 			str = "Black wins";
 		else if (typeOfBlack < typeOfWhite)
 			str = "White wins";
-		//相同类型之间的比较
 		else
-		{
-			//葫芦: 合并到三条
-			//铁支：合并到三条
-			//同花顺:利用散牌的方法
-			if(typeOfBlack == 1 || typeOfBlack == 5 || typeOfBlack == 6 || typeOfBlack == 9)
+		{//相同类型之间的比较
+			if(typeOfBlack == 1 || typeOfBlack == 5 || typeOfBlack == 6 || typeOfBlack == 9)//散牌、顺子、同花，同花顺
 				str = compareHighCard(blacks,whites);
-			else if (typeOfBlack == 2)
+			else if (typeOfBlack == 2)//一对
 				str = compareOnePair(blacks,whites);
-			else if (typeOfBlack == 3)
+			else if (typeOfBlack == 3)//两对
 				str = compareTwoPairs(blacks,whites);
-			else if (typeOfBlack == 4 || typeOfBlack == 7 || typeOfBlack == 8)
+			else if (typeOfBlack == 4 || typeOfBlack == 7 || typeOfBlack == 8)//三条、葫芦、铁支
 				str = compareThreeOrFourOfAKindAndFullHouse(blacks,whites);
 		}
 		return str;
