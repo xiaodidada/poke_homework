@@ -7,8 +7,8 @@ public class Poke
 {
 	public static void main(String[] args)
 	{
-		String black = "Black: 3D 2D JD 9D KD";
-		String white = "White: 2C 3C 4C 5C 6C";
+		String black = "Black: 9H 2S 2D 9C 9D";
+		String white = "White: 2H 2C 8D 8C 8S";
 		Poke.pokerJudge(black,white);
 	}
 	//判断牌面类型的工具
@@ -19,20 +19,20 @@ public class Poke
 		int four = 0;
 		for (int k=0;k<4;k++)
 		{
-			if (k+3 <5 &&oneside[k].charAt(0) == oneside[k+3].charAt(0))
+			if (k+3 <5 &&(oneside[k].charAt(0) == oneside[k+3].charAt(0)))
 			{
 				four++;
 				break;
 			}				
-			else if (k+2<5 &&oneside[k].charAt(0) == oneside[k+2].charAt(0))
+			else if (k+2<5 &&(oneside[k].charAt(0) == oneside[k+2].charAt(0)))
 			{
 				three++;
-				k = k+3;
+				k = k+2;
 			}				
 			else if (oneside[k].charAt(0) == oneside[k+1].charAt(0))
 			{
 				two++;
-				k = k+2;
+				k = k+1;
 			}
 				
 		}
@@ -210,12 +210,75 @@ public class Poke
 		}
 		return str;	
 	}
-	//三条
+	//三条:不可能平局
+	public static String compareThreeOfAKind(String[] blacks,String[] whites)
+	{
+		String str = "White wins";
+		//判断三条的大小
+		char blackPair = 'a';
+		char whitePair = 'a';
+		for(int i=4;i>0;i--)
+		{
+			if(blacks[i].charAt(0) == blacks[i-1].charAt(0))
+				blackPair = blacks[i].charAt(0);
+			if(whites[i].charAt(0) == whites[i-1].charAt(0))
+				whitePair = whites[i].charAt(0);
+		}
+		if (blackPair > whitePair)
+			str = "Black wins";
+		return str;
+	}
 	//顺子
-	//同花
-	//葫芦
+	public static String compareStraight(String[] blacks,String[] whites)
+	{
+		String str = "tie(平局)";
+		//判断三条的大小：若相等，比较散牌的大小
+		if(blacks[4].charAt(0) > whites[4].charAt(0))
+			str = "Black wins";
+		else if(blacks[4].charAt(0) < whites[4].charAt(0))
+			str = "White wins";
+		return str;
+	}
+	//同花:按照散牌规则比较
+	//葫芦: Full House
+	public static String compareFullHouse(String[] blacks,String[] whites)
+	{
+		String str = "White wins";
+		//判断三条的大小：若相等，比较散牌的大小
+		char blackPair = 'a';
+		char whitePair = 'a';
+		
+		for(int i=4;i>1;i--)
+		{
+			if(blacks[i].charAt(0) == blacks[i-2].charAt(0))
+				blackPair = blacks[i].charAt(0);
+			if(whites[i].charAt(0) == whites[i-2].charAt(0))
+				whitePair = whites[i].charAt(0);
+		}
+		if (blackPair > whitePair)
+			str = "Black wins";
+		return str;
+	}
 	//铁支
-	//同花顺
+	public static String compareFourOfAKind(String[] blacks,String[] whites)
+	{
+		String str = "White wins";
+		//判断四条的大小
+		char blackPair = 'a';
+		char whitePair = 'a';
+		for(int i=4;i>0;i--)
+		{
+			if(blacks[i].charAt(0) == blacks[i-1].charAt(0))
+				blackPair = blacks[i].charAt(0);
+			if(whites[i].charAt(0) == whites[i-1].charAt(0))
+				whitePair = whites[i].charAt(0);
+		}
+		if (blackPair > whitePair)
+			str = "Black wins";
+		return str;
+	}
+	//同花顺:利用散牌的方法
+	
 	public static String pokerJudge(String blackside,String whiteside)
 	{
 		String str= "tie(平局)";
@@ -252,6 +315,18 @@ public class Poke
 				str = compareOnePair(blacks,whites);
 			else if (typeOfBlack == 3)
 				str = compareTwoPairs(blacks,whites);
+			else if (typeOfBlack == 4)
+				str = compareThreeOfAKind(blacks,whites);
+			else if (typeOfBlack == 5)
+				str = compareStraight(blacks,whites);
+			else if(typeOfBlack == 6)//同花就用散牌的规则去比较
+				str = compareHighCard(blacks,whites);
+			else if(typeOfBlack == 7)//三条加一对
+				str = compareFullHouse(blacks,whites);
+			else if(typeOfBlack == 8)//三条加一对
+				str = compareFourOfAKind(blacks,whites);
+			else 
+				str = compareHighCard(blacks,whites);
 		}
 		
 		return str;
