@@ -11,6 +11,7 @@ public class Poke
 		String white = "White: 2C 3C 4C 5C 6C";
 		Poke.pokerJudge(black,white);
 	}
+	//判断牌面类型的工具
 	public static int helper(String[] oneside)
 	{
 		int two = 0;
@@ -74,6 +75,147 @@ public class Poke
 			result = 6;
 		return result;
 	}
+	//两对散牌之间的大小比较
+	public static String compareHighCard(String[] blacks,String[] whites)
+	{
+		String str = "tie(平局)";
+		//判断散牌的大小：比较最大一张牌的大小，若同，比较次大
+		for(int i=4;i>=0;i--)
+		{
+			char blackPoint = blacks[i].charAt(0);
+			char whitePoint = whites[i].charAt(0);
+			if(blackPoint < whitePoint )
+			{
+				str = "White wins";
+				break;
+			}
+			else if (blackPoint < whitePoint)
+			{
+				str = "Black wins";
+				break;
+			}
+		}
+		return str;
+	}
+	//判断对子的大小（只有一对）
+	public static String compareOnePair(String[] blacks,String[] whites)
+	{
+		String str = "tie(平局)";
+		//判断对子的大小：若相等，比较散牌的大小
+		char blackPair = 'a';
+		char whitePair = 'a';
+		for(int i=4;i>0;i--)
+		{
+			if(blacks[i].charAt(0) == blacks[i-1].charAt(0))
+				blackPair = blacks[i].charAt(0);
+			if(whites[i].charAt(0) == whites[i-1].charAt(0))
+				whitePair = whites[i].charAt(0);
+		}
+		if (blackPair > whitePair)
+			str = "Black wins";
+		else if (blackPair < whitePair)
+			str = "White wins";
+		else
+		{
+			int j = 4;
+			int k = 4;
+			while(j>0&&k>0)
+			{
+				if(blacks[j].charAt(0) == blacks[j-1].charAt(0))
+					j = j -2;
+				if(whites[k].charAt(0) == whites[k-1].charAt(0))
+					k = k -2;
+				if (j<0 || k <0)
+					break;//已经比较到牌尾
+				if (blacks[j].charAt(0) >whites[k].charAt(0))
+				{
+					str = "Black wins";
+					break;
+				}
+				else if (blacks[j].charAt(0) <whites[k].charAt(0))
+				{
+					str = "White wins";
+					break;
+				}
+				else
+				{
+					j--;
+					k--;
+				}
+			}
+		}
+		return str;	
+	}
+	//判断两对的大小
+	public static String compareTwoPairs(String[] blacks,String[] whites)
+	{
+		String str = "tie(平局)";
+		//判断对子的大小：若相等，比较散牌的大小
+		char blackPair = 'a';
+		char whitePair = 'a';
+		//判断较大的一对
+		for(int i=4;i>0;i--)
+		{
+			if(blacks[i].charAt(0) == blacks[i-1].charAt(0))
+				blackPair = blacks[i].charAt(0);
+			if(whites[i].charAt(0) == whites[i-1].charAt(0))
+				whitePair = whites[i].charAt(0);
+		}
+		if (blackPair > whitePair)
+			str = "Black wins";
+		else if (blackPair < whitePair)
+			str = "White wins";
+		else
+		{//较大的一对点数相同时，判断较小的一对
+			for(int i=0;i<4;i++)
+			{
+				if(blacks[i].charAt(0) == blacks[i+1].charAt(0))
+					blackPair = blacks[i].charAt(0);
+				if(whites[i].charAt(0) == whites[i+1].charAt(0))
+					whitePair = whites[i].charAt(0);
+			}
+			if (blackPair > whitePair)
+				str = "Black wins";
+			else if (blackPair < whitePair)
+				str = "White wins";
+			else
+			{//较小的一对点数相同，比较单张牌大小
+				int j = 4;
+				int k = 4;
+				while(j>0&&k>0)
+				{
+					if(blacks[j].charAt(0) == blacks[j-1].charAt(0))
+						j = j -2;
+					if(whites[k].charAt(0) == whites[k-1].charAt(0))
+						k = k -2;
+					if (j<0 || k <0)
+						break;//已经比较到牌尾
+					if (blacks[j].charAt(0) >whites[k].charAt(0))
+					{
+						str = "Black wins";
+						break;
+					}
+					else if (blacks[j].charAt(0) <whites[k].charAt(0))
+					{
+						str = "White wins";
+						break;
+					}
+					else
+					{
+						j--;
+						k--;
+					}
+				}
+			}
+		}
+		return str;	
+	}
+	//三条
+	//顺子
+	//同花
+	//葫芦
+	//铁支
+	//同花顺
 	public static String pokerJudge(String blackside,String whiteside)
 	{
 		String str= "tie(平局)";
@@ -104,7 +246,12 @@ public class Poke
 		//相同类型之间的比较
 		else
 		{
-			
+			if(typeOfBlack == 1)
+				str = compareHighCard(blacks,whites);
+			else if (typeOfBlack == 2)
+				str = compareOnePair(blacks,whites);
+			else if (typeOfBlack == 3)
+				str = compareTwoPairs(blacks,whites);
 		}
 		
 		return str;
